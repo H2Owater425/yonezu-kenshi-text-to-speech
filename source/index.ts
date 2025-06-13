@@ -5,6 +5,7 @@ import { sleep, getImage, getListItem } from './utility';
 	const image: HTMLImageElement | null = document.getElementById("image") as HTMLImageElement;
 	const text: HTMLTextAreaElement | null = document.getElementById("text") as HTMLTextAreaElement;
 	const start: HTMLElement | null = document.getElementById("start");
+	const volume: HTMLInputElement | null = document.getElementById("volume") as HTMLInputElement;
 	const stop: HTMLElement | null = document.getElementById("stop");
 	const signatures: HTMLElement | null = document.getElementById("signatures");
 	const images: HTMLImageElement[] = [getImage("up"), getImage("down")];
@@ -12,7 +13,7 @@ import { sleep, getImage, getListItem } from './utility';
 	let index: number = 1;
 	let isPlaying: boolean = false;
 
-	if(image === null || text == null || start == null || stop === null || signatures === null) {
+	if(image === null || text === null || start === null || volume === null || stop === null || signatures === null) {
 		alert("Elements must exist");
 
 		return;
@@ -39,6 +40,11 @@ import { sleep, getImage, getListItem } from './utility';
 			return;
 		});
 
+		volume.addEventListener("input", function (): void {
+			console.log(volume["valueAsNumber"]);
+			audioManager.setGain(volume["valueAsNumber"] / 100);
+		});
+
 		start.addEventListener("click", function (): void {
 			if(!isPlaying) {
 				isPlaying = true;
@@ -55,8 +61,7 @@ import { sleep, getImage, getListItem } from './utility';
 							if(text["value"].startsWith(SIGNATURES[j] + ">", start)) {
 								i = start + SIGNATURES[j]["length"];
 
-								buffers.push(audioManager.getBuffer(-j) as AudioBuffer)
-								console.log("SIGNATURES[" + j + "]", SIGNATURES[j], -j);
+								buffers.push(audioManager.getBuffer(-j) as AudioBuffer);
 
 								break;
 							}
@@ -68,25 +73,15 @@ import { sleep, getImage, getListItem } from './utility';
 					}
 
 					const longCode: number = code + (text["value"].charCodeAt(i + 1) << 4);
-					let audioBuffer: AudioBuffer;
 
 					if(audioManager.hasBuffer(longCode)) {
-						audioBuffer = audioManager.getBuffer(longCode) as AudioBuffer;
+						buffers.push(audioManager.getBuffer(longCode) as AudioBuffer);
 
 						i += 1;
 					} else if(audioManager.hasBuffer(code)) {
-						audioBuffer = audioManager.getBuffer(code) as AudioBuffer;
-					} else {
-						console.log(code, longCode)
-
-						continue;
+						buffers.push(audioManager.getBuffer(code) as AudioBuffer);
 					}
-
-					buffers.push(audioBuffer);
-
-					console.log(text["value"][i]);
 				}
-
 
 				buffers.reduce(function (previous: Promise<void>, current: AudioBuffer): Promise<void> {
 					return previous.then(function (): Promise<void> {

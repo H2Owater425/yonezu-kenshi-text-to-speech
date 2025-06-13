@@ -34,11 +34,14 @@ textarea#text {
 button {
 	width: 100px;
 	height: 50px;
+	font-size: 14px;
 }
 
-div#controls {
+div#controls, div#controls > div {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+	gap: 4px;
 }
 
 footer > p:last-child {

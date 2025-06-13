@@ -1,13 +1,17 @@
 export class AudioManager<T> {
 	#context: AudioContext;
+	#gain: GainNode;
 	#sources: T[];
 	#buffers: Map<T, AudioBuffer>;
 	#currentSource: AudioBufferSourceNode | undefined;
 
 	constructor(sources: T[]) {
 		this.#context = new AudioContext();
+		this.#gain = this.#context.createGain();
 		this.#sources = sources;
 		this.#buffers = new Map<T, AudioBuffer>();
+
+		this.setGain(1);
 	}
 
 	public initialize(): Promise<void> {
@@ -31,8 +35,6 @@ export class AudioManager<T> {
 				return;
 			}).bind(this))
 			.catch((function (this: AudioManager<T>, error: unknown): void {
-				console.log(this.#sources[i])
-
 				throw error;
 			}).bind(this)));
 		}
@@ -64,13 +66,20 @@ export class AudioManager<T> {
 		return;
 	}
 
+	public setGain(value: number): void {
+		this.#gain["gain"]["value"] = value;
+		this.#gain.connect(this.#context["destination"]);
+
+		return;
+	}
+
 	public play(buffer: AudioBuffer): Promise<void> {
 		return new Promise<void>((function (this: AudioManager<T>, resolve: () => void, reject: (reason: unknown) => void): void {
 			try {
 				this.#currentSource = this.#context.createBufferSource();
 				this.#currentSource["buffer"] = buffer;
 
-				this.#currentSource.connect(this.#context["destination"]);
+				this.#currentSource.connect(this.#gain);
 				this.#currentSource.addEventListener("ended", resolve);
 				this.#currentSource.start();
 			} catch(error: unknown) {
