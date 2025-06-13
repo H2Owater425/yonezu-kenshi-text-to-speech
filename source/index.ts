@@ -26,6 +26,7 @@ import { sleep, getImage, getListItem } from './utility';
 	.then(function (): void {
 		stop.addEventListener("click", function (): void {
 			isPlaying = false;
+			audioManager.stop();
 			
 			return;
 		});

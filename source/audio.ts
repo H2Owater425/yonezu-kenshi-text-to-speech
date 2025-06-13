@@ -2,6 +2,7 @@ export class AudioManager<T> {
 	#context: AudioContext;
 	#sources: T[];
 	#buffers: Map<T, AudioBuffer>;
+	#currentSource: AudioBufferSourceNode | undefined;
 
 	constructor(sources: T[]) {
 		this.#context = new AudioContext();
@@ -38,8 +39,6 @@ export class AudioManager<T> {
 
 		return Promise.all(promises)
 		.then(function (): void {
-			//console.log("AudioManager initialized");
-
 			return;
 		})
 		.catch((function (this: AudioManager<T>, error: unknown): void {
@@ -57,15 +56,23 @@ export class AudioManager<T> {
 		return this.#buffers.has(source);
 	}
 
+	public stop(): void {
+		if(this.#currentSource !== undefined) {
+			this.#currentSource.stop();
+		}
+
+		return;
+	}
+
 	public play(buffer: AudioBuffer): Promise<void> {
 		return new Promise<void>((function (this: AudioManager<T>, resolve: () => void, reject: (reason: unknown) => void): void {
 			try {
-				const bufferSource: AudioBufferSourceNode = this.#context.createBufferSource();
-				bufferSource["buffer"] = buffer;
+				this.#currentSource = this.#context.createBufferSource();
+				this.#currentSource["buffer"] = buffer;
 				
-				bufferSource.connect(this.#context["destination"]);
-				bufferSource.addEventListener("ended", resolve);
-				bufferSource.start();
+				this.#currentSource.connect(this.#context["destination"]);
+				this.#currentSource.addEventListener("ended", resolve);
+				this.#currentSource.start();
 			} catch(error: unknown) {
 				reject(error);
 			}
