@@ -69,6 +69,7 @@ input#volume {
 	div#controls > div:first-child {
 		display: flex;
 		flex-direction: column;
+		gap: 6px;
 	}
 }
 
