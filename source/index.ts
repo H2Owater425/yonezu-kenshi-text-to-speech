@@ -22,8 +22,8 @@ import { sleep, getImage, getListItem } from './utility';
 		signatures.appendChild(getListItem("<" + SIGNATURES[i] + ">", text));
 	}
 
-	function switchImage(_index?: number): void {
-		index = _index === undefined ? (index + 1) % 2 : _index;
+	function setImage(i: number): void {
+		index = i % 2;
 		// @ts-expect-error
 		image["src"] = images[index]["src"];
 
@@ -94,10 +94,15 @@ import { sleep, getImage, getListItem } from './utility';
 							return Promise.resolve();
 						}
 
-						switchImage();
-
+						sleep(current["duration"] / 2)
+						.then(function (): void {
+							setImage(0);
+						});
+						
 						return audioManager.play(current)
 						.then(function (): Promise<void> {
+							setImage(1);
+
 							return sleep(5);
 						});
 					});
@@ -105,7 +110,7 @@ import { sleep, getImage, getListItem } from './utility';
 				.then(function (): void {
 					isPlaying = false;
 
-					switchImage(1);
+					setImage(1);
 
 					return;
 				})
