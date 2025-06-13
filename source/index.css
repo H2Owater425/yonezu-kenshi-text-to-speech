@@ -52,3 +52,8 @@ ul {
 h1 {
 	text-align: center;
 }
+
+li {
+	cursor: pointer;
+	user-select: none;
+}

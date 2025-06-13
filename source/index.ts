@@ -19,7 +19,7 @@ import { sleep, getImage, getListItem } from './utility';
 	}
 
 	for(let i: number = 0; i < SIGNATURES["length"]; i++) {
-		signatures.appendChild(getListItem("<" + SIGNATURES[i] + ">"));
+		signatures.appendChild(getListItem("<" + SIGNATURES[i] + ">", text));
 	}
 
 	audioManager.initialize()

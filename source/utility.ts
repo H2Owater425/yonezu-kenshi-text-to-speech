@@ -6,10 +6,15 @@ export function getImage(name: string): HTMLImageElement {
 	return image;
 }
 
-export function getListItem(content: string): HTMLLIElement {
+export function getListItem(content: string, text: HTMLTextAreaElement): HTMLLIElement {
 	const listItem: HTMLLIElement = document.createElement("li");
-
 	listItem["textContent"] = content;
+
+	listItem.addEventListener("click", function (): void {
+		text["value"] += content;
+
+		return;
+	});
 
 	return listItem;
 }
