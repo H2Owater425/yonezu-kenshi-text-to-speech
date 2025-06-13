@@ -7,11 +7,11 @@ import { sleep, getImage, getListItem } from './utility';
 	const start: HTMLElement | null = document.getElementById("start");
 	const stop: HTMLElement | null = document.getElementById("stop");
 	const signatures: HTMLElement | null = document.getElementById("signatures");
-	const audioManager: AudioManager<number> = new AudioManager<number>(CODES);
-	let isPlaying: boolean = false;
 	const images: HTMLImageElement[] = [getImage("up"), getImage("down")];
+	const audioManager: AudioManager<number> = new AudioManager<number>(CODES);
 	let index: number = 1;
-	
+	let isPlaying: boolean = false;
+
 	if(image === null || text == null || start == null || stop === null || signatures === null) {
 		alert("Elements must exist");
 
@@ -22,15 +22,23 @@ import { sleep, getImage, getListItem } from './utility';
 		signatures.appendChild(getListItem("<" + SIGNATURES[i] + ">", text));
 	}
 
+	function switchImage(_index?: number): void {
+		index = _index === undefined ? (index + 1) % 2 : _index;
+		// @ts-expect-error
+		image["src"] = images[index]["src"];
+
+		return;
+	}
+
 	audioManager.initialize()
 	.then(function (): void {
 		stop.addEventListener("click", function (): void {
 			isPlaying = false;
 			audioManager.stop();
-			
+
 			return;
 		});
-	
+
 		start.addEventListener("click", function (): void {
 			if(!isPlaying) {
 				isPlaying = true;
@@ -64,7 +72,7 @@ import { sleep, getImage, getListItem } from './utility';
 
 					if(audioManager.hasBuffer(longCode)) {
 						audioBuffer = audioManager.getBuffer(longCode) as AudioBuffer;
-						
+
 						i += 1;
 					} else if(audioManager.hasBuffer(code)) {
 						audioBuffer = audioManager.getBuffer(code) as AudioBuffer;
@@ -75,7 +83,7 @@ import { sleep, getImage, getListItem } from './utility';
 					}
 
 					buffers.push(audioBuffer);
-	
+
 					console.log(text["value"][i]);
 				}
 
@@ -86,8 +94,7 @@ import { sleep, getImage, getListItem } from './utility';
 							return Promise.resolve();
 						}
 
-						index = (index + 1) % 2;
-						image["src"] = images[index]["src"];
+						switchImage();
 
 						return audioManager.play(current)
 						.then(function (): Promise<void> {
@@ -97,8 +104,8 @@ import { sleep, getImage, getListItem } from './utility';
 				}, Promise.resolve())
 				.then(function (): void {
 					isPlaying = false;
-					index = 1;
-					image["src"] = images[1]["src"];
+
+					switchImage(1);
 
 					return;
 				})

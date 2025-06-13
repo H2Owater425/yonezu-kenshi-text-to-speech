@@ -69,14 +69,14 @@ export class AudioManager<T> {
 			try {
 				this.#currentSource = this.#context.createBufferSource();
 				this.#currentSource["buffer"] = buffer;
-				
+
 				this.#currentSource.connect(this.#context["destination"]);
 				this.#currentSource.addEventListener("ended", resolve);
 				this.#currentSource.start();
 			} catch(error: unknown) {
 				reject(error);
 			}
-	
+
 			return;
 		}).bind(this));
 	}
