@@ -37,7 +37,7 @@ button {
 	font-size: 14px;
 }
 
-div#controls, div#controls > div {
+div#controls {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -61,7 +61,18 @@ li {
 	user-select: none;
 }
 
-main > section:last-child {
+input#volume {
+	width: 150px;
+}
+
+@media (width < 462px) {
+	div#controls > div:first-child {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+main > section:last-child, div#controls > div:nth-child(2) {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
