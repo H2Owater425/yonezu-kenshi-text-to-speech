@@ -11,7 +11,14 @@ export function getListItem(content: string, text: HTMLTextAreaElement): HTMLLIE
 	listItem["textContent"] = content;
 
 	listItem.addEventListener("click", function (): void {
-		text["value"] += content;
+		const index: number = text["selectionStart"];
+
+		text["value"] = text["value"].slice(0, index) + content + text["value"].slice(index);
+
+		text.focus();
+
+		text["selectionStart"] = index + content["length"];
+		text["selectionEnd"] = text["selectionStart"];
 
 		return;
 	});
