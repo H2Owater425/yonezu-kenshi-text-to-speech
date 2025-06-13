@@ -54,6 +54,8 @@ import { sleep, getImage, getListItem } from './utility';
 			return;
 		});
 
+		const spaceAudioBuffer: AudioBuffer = audioManager.getBuffer(12288) as AudioBuffer;
+
 		start.addEventListener("click", function (): void {
 			if(!isPlaying) {
 				isPlaying = true;
@@ -89,6 +91,8 @@ import { sleep, getImage, getListItem } from './utility';
 						i += 1;
 					} else if(audioManager.hasBuffer(code)) {
 						buffers.push(audioManager.getBuffer(code) as AudioBuffer);
+					} else {
+						buffers.push(spaceAudioBuffer);
 					}
 				}
 
@@ -98,10 +102,12 @@ import { sleep, getImage, getListItem } from './utility';
 							return Promise.resolve();
 						}
 
-						sleep(current["duration"] / 2)
-						.then(function (): void {
-							setImage(0);
-						});
+						if(current !== spaceAudioBuffer) {
+							sleep(current["duration"] / 2)
+							.then(function (): void {
+								setImage(0);
+							});
+						}
 						
 						return audioManager.play(current)
 						.then(function (): Promise<void> {
