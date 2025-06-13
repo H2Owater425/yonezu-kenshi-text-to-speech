@@ -49,8 +49,9 @@ import { sleep, getImage, getListItem } from './utility';
 		});
 
 		volume.addEventListener("input", function (): void {
-			console.log(volume["valueAsNumber"]);
 			audioManager.setGain(volume["valueAsNumber"] / 100);
+
+			return;
 		});
 
 		start.addEventListener("click", function (): void {
