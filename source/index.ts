@@ -7,13 +7,14 @@ import { sleep, getImage, getListItem } from './utility';
 	const start: HTMLElement | null = document.getElementById("start");
 	const volume: HTMLInputElement | null = document.getElementById("volume") as HTMLInputElement;
 	const stop: HTMLElement | null = document.getElementById("stop");
+	const clear: HTMLElement | null = document.getElementById("clear");
 	const signatures: HTMLElement | null = document.getElementById("signatures");
 	const images: HTMLImageElement[] = [getImage("up"), getImage("down")];
 	const audioManager: AudioManager<number> = new AudioManager<number>(CODES);
 	let index: number = 1;
 	let isPlaying: boolean = false;
 
-	if(image === null || text === null || start === null || volume === null || stop === null || signatures === null) {
+	if(image === null || text === null || start === null || volume === null || stop === null || clear === null || signatures === null) {
 		alert("Elements must exist");
 
 		return;
@@ -36,6 +37,13 @@ import { sleep, getImage, getListItem } from './utility';
 		stop.addEventListener("click", function (): void {
 			isPlaying = false;
 			audioManager.stop();
+
+			return;
+		});
+
+		clear.addEventListener("click", function (): void {
+			text["value"] = "";
+			text.focus();
 
 			return;
 		});
