@@ -16,7 +16,7 @@ body {
 main {
 	display: flex;
 	flex-direction: column;
-	gap: 40px;
+	gap: 30px;
 	max-width: 600px;
 }
 
@@ -56,4 +56,10 @@ h1 {
 li {
 	cursor: pointer;
 	user-select: none;
+}
+
+main > section:last-child {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
