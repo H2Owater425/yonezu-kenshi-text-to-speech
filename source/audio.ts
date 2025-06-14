@@ -11,6 +11,7 @@ export class AudioManager<T> {
 		this.#sources = sources;
 		this.#buffers = new Map<T, AudioBuffer>();
 
+		this.#gain.connect(this.#context["destination"]);
 		this.setGain(1);
 	}
 
@@ -68,7 +69,6 @@ export class AudioManager<T> {
 
 	public setGain(value: number): void {
 		this.#gain["gain"]["value"] = value;
-		this.#gain.connect(this.#context["destination"]);
 
 		return;
 	}
