@@ -9,10 +9,9 @@ import { sleep, getImage, getListItem } from './utility';
 	const stop: HTMLElement | null = document.getElementById("stop");
 	const clear: HTMLElement | null = document.getElementById("clear");
 	const signatures: HTMLElement | null = document.getElementById("signatures");
-	const images: HTMLImageElement[] = [getImage("up"), getImage("down")];
+	const images: HTMLImageElement[] = [getImage("down"), getImage("up")];
 	const audioManager: AudioManager<number> = new AudioManager<number>(CODES);
 	const previousVolume: number = Number.parseInt(localStorage.getItem("volume") as string);
-	let index: number = 1;
 	let isPlaying: boolean = false;
 
 	if(image === null || text === null || start === null || volume === null || stop === null || clear === null || signatures === null) {
@@ -21,17 +20,18 @@ import { sleep, getImage, getListItem } from './utility';
 		return;
 	}
 
-	function setImage(i: number): void {
-		index = i % 2;
+	function setImage(index: number): void {
 		// @ts-expect-error
 		image["src"] = images[index]["src"];
-
+		
 		return;
 	}
 
 	if(!Number.isNaN(previousVolume) && previousVolume >= 0 && previousVolume <= 100) {
 		volume["valueAsNumber"] = previousVolume;
 		audioManager.setGain(previousVolume / 100);
+	} else {
+		localStorage.setItem("volume", "100");
 	}
 
 	for(let i: number = 0; i < SIGNATURES["length"]; i++) {
@@ -118,7 +118,7 @@ import { sleep, getImage, getListItem } from './utility';
 								if(current !== spaceAudioBuffer) {
 									sleep(current["duration"] / 2)
 									.then(function (): void {
-										setImage(0);
+										setImage(1);
 		
 										return;
 									});
@@ -126,7 +126,7 @@ import { sleep, getImage, getListItem } from './utility';
 								
 								return audioManager.play(current)
 								.then(function (): Promise<void> {
-									setImage(1);
+									setImage(0);
 		
 									return sleep(5);
 								});
@@ -134,9 +134,7 @@ import { sleep, getImage, getListItem } from './utility';
 						}, Promise.resolve())
 						.then(function (): void {
 							isPlaying = false;
-		
-							setImage(1);
-		
+
 							return;
 						})
 						.catch(alert);
