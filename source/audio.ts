@@ -19,7 +19,7 @@ export class AudioManager<T> {
 		const promises: Promise<void>[] = [];
 
 		for(let i: number = 0; i < this.#sources["length"]; i++) {
-			promises.push(fetch("/audios/" + this.#sources[i] + ".wav")
+			promises.push(fetch("/audios/" + this.#sources[i] + ".flac")
 			.then(function (response: Response): Promise<ArrayBuffer> {
 				return response.arrayBuffer();
 			})

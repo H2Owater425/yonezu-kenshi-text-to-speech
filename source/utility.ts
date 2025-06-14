@@ -1,7 +1,7 @@
 export function getImage(name: string): HTMLImageElement {
 	const image: HTMLImageElement = new Image();
 
-	image["src"] = "/images/" + name + ".png";
+	image["src"] = "/images/" + name + ".webp";
 
 	return image;
 }
