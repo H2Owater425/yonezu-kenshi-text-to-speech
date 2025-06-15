@@ -4,7 +4,7 @@ import { sleep, getImage, getListItem } from './utility';
 (function (): void {
 	const image: HTMLImageElement | null = document.getElementById("image") as HTMLImageElement;
 	const text: HTMLTextAreaElement | null = document.getElementById("text") as HTMLTextAreaElement;
-	const start: HTMLElement | null = document.getElementById("start");
+	const start: HTMLButtonElement | null = document.getElementById("start") as HTMLButtonElement;
 	const volume: HTMLInputElement | null = document.getElementById("volume") as HTMLInputElement;
 	const stop: HTMLElement | null = document.getElementById("stop");
 	const clear: HTMLElement | null = document.getElementById("clear");
@@ -12,7 +12,6 @@ import { sleep, getImage, getListItem } from './utility';
 	const images: HTMLImageElement[] = [getImage("down"), getImage("up")];
 	const audioManager: AudioManager<number> = new AudioManager<number>(CODES);
 	const previousVolume: number = Number.parseInt(localStorage.getItem("volume") as string);
-	let isPlaying: boolean = false;
 
 	if(image === null || text === null || start === null || volume === null || stop === null || clear === null || signatures === null) {
 		alert("Elements must exist");
@@ -27,6 +26,13 @@ import { sleep, getImage, getListItem } from './utility';
 		return;
 	}
 
+	function setPlaying(isPlaying: boolean): void {
+		// @ts-expect-error
+		start["disabled"] = isPlaying;
+
+		return;
+	}
+
 	if(!Number.isNaN(previousVolume) && previousVolume >= 0 && previousVolume <= 100) {
 		volume["valueAsNumber"] = previousVolume;
 		audioManager.setGain(previousVolume / 100);
@@ -38,16 +44,14 @@ import { sleep, getImage, getListItem } from './utility';
 		signatures.appendChild(getListItem("<" + SIGNATURES[i] + ">", text));
 	}
 
-	start.setAttribute("disabled", "");
-
 	requestAnimationFrame(function (): void {
 		requestAnimationFrame(function (): void {
 			audioManager.initialize()
 			.then(function (): void {
-				start.removeAttribute("disabled");
-		
+				setPlaying(false);
+
 				stop.addEventListener("click", function (): void {
-					isPlaying = false;
+					setPlaying(false);
 					audioManager.stop();
 		
 					return;
@@ -70,8 +74,8 @@ import { sleep, getImage, getListItem } from './utility';
 				const spaceAudioBuffer: AudioBuffer = audioManager.getBuffer(12288) as AudioBuffer;
 		
 				start.addEventListener("click", function (): void {
-					if(!isPlaying) {
-						isPlaying = true;
+					if(!start["disabled"]) {
+						setPlaying(true);
 		
 						const buffers: AudioBuffer[] = [];
 		
@@ -111,7 +115,7 @@ import { sleep, getImage, getListItem } from './utility';
 		
 						buffers.reduce(function (previous: Promise<void>, current: AudioBuffer): Promise<void> {
 							return previous.then(function (): Promise<void> {
-								if(!isPlaying) {
+								if(!start["disabled"]) {
 									return Promise.resolve();
 								}
 		
@@ -133,7 +137,7 @@ import { sleep, getImage, getListItem } from './utility';
 							});
 						}, Promise.resolve())
 						.then(function (): void {
-							isPlaying = false;
+							setPlaying(false);
 
 							return;
 						})
